@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import Icon from '../components/Icon.astro';
+import { personalVideos } from '../data/personal';
+const base = import.meta.env.BASE_URL;
+---
+<Layout title="Personal · Ji Woong Kim" description="Saxophone and RC drifting videos from Ji Woong (Brian) Kim.">
+  <SiteHeader page="personal" />
+  <main id="main" class="page-shell personal-page">
+    <h1>Personal</h1>
+    {personalVideos.map(video => <section class="personal-video" aria-labelledby={`${video.id}-title`}>
+      <h2 id={`${video.id}-title`}>{video.title}</h2>
+      <p>{video.description}</p>
+      <div class="personal-player"><img class="personal-poster" src={`${base}media/personal-${video.id}.webp`} alt="" width="960" height="540" loading="lazy" /><iframe src={video.embedUrl} title={video.title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <a class="subtle-link" href={video.watchUrl} target="_blank" rel="noreferrer">Watch on YouTube <Icon name="external" size={17} /></a>
+    </section>)}
+  </main>
+</Layout>

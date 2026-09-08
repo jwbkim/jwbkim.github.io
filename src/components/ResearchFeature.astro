@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import { projects } from '../data/profile';
+interface Props { project: typeof projects[number]; }
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<article class="research-feature" id={project.id}>
+  <div class="research-body">
+    <div class:list={['research-media-group', { 'has-cover': project.cover }]}>
+      <figure class="research-media">
+        <div class="video-frame">
+          <video muted loop playsinline preload="none" poster={`${base}media/${project.id}.webp`} aria-label={project.caption} data-demo-video>
+            <source data-src={`${base}media/${project.id}.mp4`} type="video/mp4" />
+          </video>
+          <button class="video-control" type="button" aria-label={`Play ${project.title} video`} data-video-toggle data-title={project.title}>
+            <span class="play-icon"><Icon name="play" size={13} /></span><span class="pause-icon" hidden><Icon name="pause" size={13} /></span>
+            <span data-video-label>Play</span>
+          </button>
+          <noscript><a class="video-fallback" href={`${base}media/${project.id}.mp4`}>Watch demonstration ↗</a></noscript>
+        </div>
+      </figure>
+      {project.cover && (
+        <figure class="research-cover">
+          <a href={project.cover.url} target="_blank" rel="noreferrer">
+            <img src={`${base}media/${project.cover.image}`} alt={project.cover.alt} width="625" height="747" loading="lazy" decoding="async" />
+          </a>
+        </figure>
+      )}
+    </div>
+    <div class="research-summary">
+      <header class="research-heading">
+        <h3><a href={project.url} target="_blank" rel="noreferrer">{project.title}</a></h3>
+        <p class="project-venue">{project.venue}</p>
+        {project.distinctions && (
+          <div class="project-distinctions">
+            {project.distinctions.map((distinction) => (
+              <p class="distinction">
+                {distinction.url
+                  ? <a href={distinction.url} target="_blank" rel="noreferrer">{distinction.text}</a>
+                  : distinction.text}
+                {distinction.context && <span class="distinction-context"> ({distinction.context})</span>}
+              </p>
+            ))}
+          </div>
+        )}
+      </header>
+      <p class="project-description">{project.description}</p>
+      <div class="project-links"><a href={project.url} target="_blank" rel="noreferrer">Project website <Icon name="external" size={15} /></a>{project.paper && <a href={project.paper} target="_blank" rel="noreferrer">Paper <Icon name="external" size={15} /></a>}</div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,77 @@
+name: Deploy academic website
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Read GitHub Pages configuration
+        id: pages
+        uses: actions/configure-pages@v6.0.0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Astro and TypeScript
+        run: npm run check
+
+      - name: Sync visitor statistics when configured
+        env:
+          UMAMI_API_KEY: ${{ secrets.UMAMI_API_KEY }}
+          UMAMI_WEBSITE_ID: ${{ vars.UMAMI_WEBSITE_ID || vars.PUBLIC_UMAMI_WEBSITE_ID }}
+          UMAMI_API_REGION: ${{ vars.UMAMI_API_REGION }}
+        run: |
+          if [ -n "$UMAMI_API_KEY" ]; then
+            npm run stats:sync
+          else
+            echo "Visitor statistics sync is not configured; using the saved snapshot."
+          fi
+
+      - name: Build static site
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.origin }}
+          BASE_PATH: ${{ vars.BASE_PATH || steps.pages.outputs.base_path || '/' }}
+          PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN: ${{ vars.PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN }}
+          PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}
+          PUBLIC_UMAMI_SCRIPT_URL: ${{ vars.PUBLIC_UMAMI_SCRIPT_URL }}
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1

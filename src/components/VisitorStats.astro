@@ -1,0 +1,133 @@
+---
+import savedSnapshot from '../data/visitor-stats.json';
+
+type VisitorSnapshot = {
+  version: 1;
+  source: 'umami';
+  period: { startAt: string; endAt: string };
+  updatedAt: string;
+  pageviews: number;
+  visitors: number;
+  countries: { code: string; visitors: number }[];
+  unknownCountryVisitors: number;
+};
+
+const isCount = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
+
+function isSnapshot(value: unknown): value is VisitorSnapshot {
+  if (!value || typeof value !== 'object') return false;
+  const data = value as VisitorSnapshot;
+  if (data.version !== 1 || data.source !== 'umami' || !data.period) return false;
+  const start = Date.parse(data.period.startAt);
+  const end = Date.parse(data.period.endAt);
+  const updated = Date.parse(data.updatedAt);
+  return (
+    Number.isFinite(start) && Number.isFinite(end) && Number.isFinite(updated) &&
+    end - start === 30 * 24 * 60 * 60 * 1000 && updated >= end &&
+    isCount(data.pageviews) && isCount(data.visitors) && isCount(data.unknownCountryVisitors) &&
+    Array.isArray(data.countries) &&
+    data.countries.every((country) =>
+      country && typeof country.code === 'string' && /^[A-Z]{2}$/.test(country.code) &&
+      country.code !== 'ZZ' && isCount(country.visitors) && country.visitors > 0
+    ) &&
+    new Set(data.countries.map((country) => country.code)).size === data.countries.length
+  );
+}
+
+function readSnapshot(value: unknown): VisitorSnapshot | null {
+  return isSnapshot(value) ? value : null;
+}
+
+const snapshot = readSnapshot(savedSnapshot);
+const number = new Intl.NumberFormat('en-US');
+const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+const date = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const countries = [...(snapshot?.countries ?? [])].sort((a, b) => b.visitors - a.visitors || a.code.localeCompare(b.code));
+const leadingCountries = countries.slice(0, 5);
+const otherCountries = countries.slice(5);
+const largestCountry = countries[0]?.visitors ?? 1;
+---
+
+{snapshot && (
+  <section class="visitor-stats" aria-labelledby="visitor-stats-title">
+    <div class="visitor-intro">
+      <div class="visitor-heading">
+        <svg class="globe" viewBox="0 0 40 40" width="40" height="40" fill="none" aria-hidden="true">
+          <circle cx="20" cy="20" r="17" />
+          <ellipse cx="20" cy="20" rx="7.5" ry="17" />
+          <path d="M3 20h34M6.5 10.5c7 3.2 20 3.2 27 0M6.5 29.5c7-3.2 20-3.2 27 0" />
+        </svg>
+        <h2 id="visitor-stats-title">Visitors, worldwide.</h2>
+      </div>
+      <p class="visitor-period">30-day snapshot<br />
+        <time datetime={snapshot.period.startAt}>{date.format(new Date(snapshot.period.startAt))}</time>
+        <span aria-hidden="true"> – </span>
+        <time datetime={new Date(Date.parse(snapshot.period.endAt) - 1).toISOString()}>{date.format(new Date(Date.parse(snapshot.period.endAt) - 1))}</time>
+        <span class="utc"> UTC</span>
+      </p>
+      <dl class="visitor-totals">
+        <div><dt>Visitors</dt><dd>{number.format(snapshot.visitors)}</dd></div>
+        <div><dt>Page views</dt><dd>{number.format(snapshot.pageviews)}</dd></div>
+        <div><dt>Countries</dt><dd>{number.format(countries.length)}</dd></div>
+      </dl>
+    </div>
+    <div class="visitor-countries">
+      <p class="country-heading">Visitors by country</p>
+      <ul class="country-list">
+        {leadingCountries.map((country) => (
+          <li>
+            <span class="country-name">{regionNames.of(country.code) ?? country.code}</span>
+            <span class="country-track" aria-hidden="true"><span style={`width:${(country.visitors / largestCountry) * 100}%`}></span></span>
+            <span class="country-count">{number.format(country.visitors)}</span>
+          </li>
+        ))}
+        {snapshot.unknownCountryVisitors > 0 && (
+          <li><span class="country-name">Location unknown</span><span></span><span class="country-count">{number.format(snapshot.unknownCountryVisitors)}</span></li>
+        )}
+      </ul>
+      {otherCountries.length > 0 && (
+        <details class="more-countries">
+          <summary>{otherCountries.length} more {otherCountries.length === 1 ? 'country' : 'countries'}</summary>
+          <ul class="country-list">
+            {otherCountries.map((country) => (
+              <li><span class="country-name">{regionNames.of(country.code) ?? country.code}</span><span></span><span class="country-count">{number.format(country.visitors)}</span></li>
+            ))}
+          </ul>
+        </details>
+      )}
+      <p class="visitor-note">Aggregate statistics · Approximate locations</p>
+    </div>
+  </section>
+)}
+
+<style>
+  .visitor-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; padding: 2.5rem 0; border-top: 1px solid #2928241f; color: #292824; }
+  .visitor-heading { display: flex; align-items: center; gap: .85rem; }
+  .globe { flex: 0 0 auto; color: #793940; stroke: currentColor; stroke-width: 1; }
+  .visitor-heading h2 { margin: 0; font-family: var(--serif); font-size: 2rem; font-weight: 400; line-height: 1.1; }
+  .visitor-period { margin: .9rem 0 1.25rem; color: var(--muted); font-size: 1rem; line-height: 1.7; }
+  .utc { font-size: .875rem; }
+  .visitor-totals { display: flex; flex-wrap: wrap; gap: 1.9rem; margin: 0; }
+  .visitor-totals div { display: flex; flex-direction: column-reverse; gap: .3rem; }
+  .visitor-totals dt { color: var(--muted); font-size: 1rem; }
+  .visitor-totals dd { margin: 0; font-size: 1.7rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .country-heading { margin: .2rem 0 .75rem; color: var(--muted); font-size: 1rem; }
+  .country-list { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+  .country-list li { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(2rem, 1fr) 3rem; gap: 1rem; align-items: center; font-size: 1rem; line-height: 1.5; }
+  .country-track { height: 2px; background: #2928240b; }
+  .country-track span { display: block; height: 100%; background: #79394080; }
+  .country-count { text-align: right; font-variant-numeric: tabular-nums; }
+  .more-countries { margin-top: .7rem; }
+  .more-countries summary { width: fit-content; padding: .2rem 0; color: #793940; cursor: pointer; font-size: 1rem; }
+  .more-countries summary:focus-visible { outline: 2px solid #793940; outline-offset: 4px; }
+  .more-countries[open] summary { margin-bottom: .65rem; }
+  .more-countries .country-list { max-height: 13rem; overflow-y: auto; padding-right: .4rem; scrollbar-width: thin; scrollbar-color: var(--muted) transparent; }
+  .visitor-note { margin: .9rem 0 0; color: var(--muted); font-size: .875rem; }
+  @media (max-width: 640px) {
+    .visitor-stats { grid-template-columns: 1fr; gap: 1.8rem; padding: 2rem 0; }
+    .visitor-heading h2 { font-size: 2rem; }
+    .visitor-totals { gap: 2rem; }
+    .country-list li { gap: .75rem; }
+  }
+</style>
