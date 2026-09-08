@@ -46,11 +46,11 @@ Set `upcoming: true` on future news and remove it after the event. Keep stable p
 
 ## Publish with GitHub Pages
 
-The supplied [deployment workflow](.github/workflows/deploy.yml) runs **only when manually started**. Uploading or pushing the source alone does not publish it. No remote repository or live site has been created as part of this project.
+The supplied [deployment workflow](.github/workflows/deploy.yml) builds and publishes the site **automatically on every push to `main`**. It also supports manual runs. Local edits appear in the local preview; commit and push them to `main` to update the public site.
 
 1. Add these source files, including `package-lock.json`, to your chosen GitHub repository. Keep `.env` files and `node_modules/` excluded.
 2. In the repository, open **Settings → Pages → Build and deployment**, then choose **GitHub Actions** as the source.
-3. Ensure `deploy.yml` is on the repository's default branch. Open **Actions → Deploy academic website → Run workflow** and select the branch to publish.
+3. Commit and push `deploy.yml` and the site source to `main`. That push starts deployment automatically. For a manual deployment, open **Actions → Deploy academic website → Run workflow** and select `main`.
 4. The workflow installs locked dependencies, checks the site, builds `dist/`, and deploys the result. Its deployment summary links to the live site.
 
 The workflow reads the site's origin and path from GitHub's Pages configuration. It supports both `username.github.io` repositories and project repositories such as `website`, which publish under `/website/`. No path setting is needed for the usual setup. This follows GitHub's [custom workflow guidance](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) and the [official Pages metadata outputs](https://github.com/actions/configure-pages/blob/main/action.yml).
@@ -78,7 +78,7 @@ The public traffic section is hidden until a valid snapshot from real analytics 
 
 Copy `.env.example` to a private `.env` for local public tracking settings. In GitHub, add the corresponding `PUBLIC_*` values as repository **variables**. Choose Cloudflare Web Analytics for a private dashboard, or Umami for tracking plus the optional public visitor/country summary. See the complete [analytics setup](docs/analytics.md).
 
-For the public summary, configure `PUBLIC_UMAMI_WEBSITE_ID` and `PUBLIC_UMAMI_SCRIPT_URL` as variables, `UMAMI_API_KEY` as a repository **secret**, and optionally `UMAMI_API_REGION` (`us` or `eu`) as a variable. The manual workflow then syncs the latest 30 complete UTC days before building. A configured sync failure stops deployment. Without the secret, it skips syncing and uses the existing snapshot, initially `null`. Run the workflow again when you want to refresh the published numbers.
+For the public summary, configure `PUBLIC_UMAMI_WEBSITE_ID` and `PUBLIC_UMAMI_SCRIPT_URL` as variables, `UMAMI_API_KEY` as a repository **secret**, and optionally `UMAMI_API_REGION` (`us` or `eu`) as a variable. Each deployment then syncs the latest 30 complete UTC days before building. A configured sync failure stops deployment. Without the secret, it skips syncing and uses the existing snapshot, initially `null`. Push an update to `main` or run the workflow manually to refresh the published numbers.
 
 To sync locally with the private credentials in `.env.local`:
 
