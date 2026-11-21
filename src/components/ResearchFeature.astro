@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { projects } from '../data/profile';
+import { profile, projects } from '../data/profile';
 interface Props { project: typeof projects[number]; }
 const { project } = Astro.props;
 const base = import.meta.env.BASE_URL;
@@ -31,6 +31,8 @@ const base = import.meta.env.BASE_URL;
     <div class="research-summary">
       <header class="research-heading">
         <h3><a href={project.url} target="_blank" rel="noreferrer">{project.title}</a></h3>
+        <p class="project-authors">{project.authors.split(/(Ji Woong Kim|\*)/g).map(part => part === profile.name ? <strong>{part}</strong> : part === '*' ? <sup>*</sup> : part)}</p>
+        {project.authorNote && <p class="project-author-note">{project.authorNote}</p>}
         <p class="project-venue">{project.venue}</p>
         {project.distinctions && (
           <div class="project-distinctions">

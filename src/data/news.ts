@@ -10,12 +10,26 @@ export const news: NewsItem[] = [
   {
     date: '2026-11',
     content: ['Giving a talk at the Georgia Chapter of the American College of Cardiology.'],
-    upcoming: true,
+  },
+  {
+    date: '2026-10',
+    content: [
+      '🏆 I was selected as a Rising Star at the ',
+      { text: 'University of Michigan’s 2026 AI Symposium', url: 'https://ai.engin.umich.edu/events/2026-ai-symposium/' },
+      ', where I gave a talk!',
+    ],
+  },
+  {
+    date: '2026-10',
+    content: [
+      '🏆 I was selected as a Rising Star at the ',
+      { text: 'IROS 2026 Evolving Landscape of Surgical Robotics (ELSR) Workshop', url: 'https://sites.google.com/view/iros-elsr-2026/' },
+      ', where I gave a talk!',
+    ],
   },
   {
     date: '2026-10',
     content: ['I will be a panelist at the IROS 2026 Evolving Landscape of Surgical Robotics Workshop.'],
-    upcoming: true,
   },
   {
     date: '2026-06',

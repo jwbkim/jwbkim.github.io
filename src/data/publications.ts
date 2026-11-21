@@ -10,7 +10,8 @@ export interface Publication {
   featured?: boolean;
 }
 
-// Publication status follows the August 2026 CV. See docs/content-sources.md.
+// August 2026 CV, reconciled with Scholar and primary sources in November 2026.
+// See docs/content-sources.md for publication status and version decisions.
 export const publications: Publication[] = [
   {
     id: 'ego-pi',
@@ -19,7 +20,7 @@ export const publications: Publication[] = [
     year: 2026,
     venue: 'CVPR Findings',
     type: 'conference',
-    note: '* Equal contribution',
+    note: '* Co-first authors',
     featured: true,
     links: [{ label: 'Paper', url: 'https://arxiv.org/abs/2606.08107' }, { label: 'Project', url: 'https://egopipaper.github.io/' }],
   },
@@ -49,6 +50,34 @@ export const publications: Publication[] = [
     venue: 'Scientific Data',
     type: 'journal',
     links: [{ label: 'Paper', url: 'https://www.nature.com/articles/s41597-025-06526-z' }, { label: 'Code', url: 'https://github.com/phnib/ImitateCholec' }],
+  },
+  {
+    id: 'agentclinic',
+    title: 'AgentClinic: A Multimodal Benchmark for Tool-Using Clinical AI Agents',
+    authors: 'Samuel Schmidgall, Rojin Ziaei, Carl Harris, Ji Woong Kim, Eduardo Pontes Reis, Jeffrey Jopling, Michael Moor',
+    year: 2026,
+    venue: 'npj Digital Medicine',
+    type: 'journal',
+    links: [{ label: 'Paper', url: 'https://www.nature.com/articles/s41746-026-02674-7' }],
+  },
+  {
+    id: 'autonomous-tumor-resection',
+    title: 'Imitation Learning for Supervised Autonomous Tumor Resection in Central Airway Obstruction',
+    authors: 'Nural Yilmaz, Juo-Tung Chen, Hao Ding, Chenhao Yu, Spencer Huang, Ji Woong Kim, Mariana Smith, Naren Nimmagadda, Alejandro Chara, Brendan Burkhart, Anton Deguet, Mathias Unberath, Axel Krieger',
+    year: 2026,
+    venue: 'International Journal of Computer Assisted Radiology and Surgery',
+    type: 'journal',
+    links: [{ label: 'Paper', url: 'https://link.springer.com/article/10.1007/s11548-026-03611-5' }],
+  },
+  {
+    id: 'surgical-keypoint-detection',
+    title: 'Real-Time Surgical Keypoint Detection in Laparoscopic Cholecystectomy',
+    authors: 'Yiyang You*, De Ru Tsai*, Yoseph Kim, Antony Goldenberg, Juo Tung Chen, Ji Woong Kim, Axel Krieger, Richard Jaepyeong Cha',
+    year: 2026,
+    venue: 'Collaborative Intelligence and Autonomy in Image-Guided Surgery (COLAS 2025)',
+    type: 'conference',
+    note: 'Workshop proceedings · * Co-first authors',
+    links: [{ label: 'Paper', url: 'https://link.springer.com/chapter/10.1007/978-3-032-09784-2_9' }],
   },
   {
     id: 'srt-h',
@@ -99,12 +128,22 @@ export const publications: Publication[] = [
   },
   {
     id: 'soft-guidewire',
-    title: 'Autonomous Soft Robotic Guidewire Navigation via Imitation Learning',
+    title: 'Toward Autonomous Soft Robotic Endovascular Navigation via Imitation Learning',
     authors: 'Noah Barnes, Ji Woong Kim, Lingyun Di, Hannah Qu, Anuruddha Bhattacharjee, Miroslaw Janowski, Dheeraj Gandhi, Bailey Felix, Shaopeng Jiang, Olivia Young, Mark Fuge, Ryan D. Sochol, Jeremy D. Brown, Axel Krieger',
     year: 2025,
     venue: 'Under review',
     type: 'preprint',
     links: [{ label: 'Paper', url: 'https://arxiv.org/abs/2510.09497' }, { label: 'Project', url: 'https://softrobotnavigation.github.io/' }],
+  },
+  {
+    id: 'digital-twin-phase-recognition',
+    title: 'Towards Robust Algorithms for Surgical Phase Recognition via Digital Twin Representation',
+    authors: 'Hao Ding, Yuqian Zhang, Wenzheng Cheng, Xinyu Wang, Xu Lian, Chenhao Yu, Hongchao Shu, Ji Woong Kim, Axel Krieger, Mathias Unberath',
+    year: 2025,
+    venue: 'International Workshop on Digital Twin for Healthcare (DT4H)',
+    type: 'conference',
+    note: 'MICCAI workshop',
+    links: [{ label: 'Paper', url: 'https://link.springer.com/chapter/10.1007/978-3-032-07694-6_12' }, { label: 'arXiv', url: 'https://arxiv.org/abs/2410.20026' }],
   },
   {
     id: 'srt',
@@ -182,15 +221,6 @@ export const publications: Publication[] = [
     links: [{ label: 'Paper', url: 'https://arxiv.org/abs/2403.05949' }],
   },
   {
-    id: 'digital-twin-phase-recognition',
-    title: 'Towards Robust Algorithms for Surgical Phase Recognition via Digital Twin-Based Scene Representation',
-    authors: 'Hao Ding, Yuqian Zhang, Hongchao Shu, Xu Lian, Ji Woong Kim, Axel Krieger, Mathias Unberath',
-    year: 2024,
-    venue: 'arXiv:2410.20026',
-    type: 'preprint',
-    links: [{ label: 'Paper', url: 'https://arxiv.org/abs/2410.20026v1' }],
-  },
-  {
     id: 'retinal-navigation-ex-vivo',
     title: 'Autonomous Needle Navigation in Retinal Microsurgery: Evaluation in Ex Vivo Porcine Eyes',
     authors: 'Peiyao Zhang, Ji Woong Kim, Peter Gehlbach, Iulian Iordachita, Marin Kobilarov',
@@ -208,6 +238,15 @@ export const publications: Publication[] = [
     type: 'preprint',
     note: 'Workshop paper',
     links: [{ label: 'Paper', url: 'https://arxiv.org/abs/2306.17421' }],
+  },
+  {
+    id: 'autonomous-retinal-vein-cannulation',
+    title: 'Deep Learning Guided Autonomous Surgery: Guiding Small Needles into Sub-Millimeter Scale Blood Vessels',
+    authors: 'Ji Woong Kim, Peiyao Zhang, Peter Gehlbach, Iulian Iordachita, Marin Kobilarov',
+    year: 2023,
+    venue: 'arXiv:2306.10133',
+    type: 'preprint',
+    links: [{ label: 'Paper', url: 'https://arxiv.org/abs/2306.10133' }],
   },
   {
     id: 'oct-guided-injections',

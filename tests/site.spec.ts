@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { publications } from '../src/data/publications';
 
 test('news can scroll, expand, and return to its compact layout', async ({ page }) => {
   await page.goto('/');
@@ -18,7 +19,7 @@ test('news can scroll, expand, and return to its compact layout', async ({ page 
 
 test('publication type and text search work together, with an accessible reset', async ({ page }) => {
   await page.goto('/#publications');
-  await expect(page.locator('.publication')).toHaveCount(27);
+  await expect(page.locator('.publication')).toHaveCount(publications.length);
   await page.getByRole('button', {name: 'Journals', exact: true}).click();
   const search = page.getByRole('searchbox', {name: 'Search publications by title, author, venue, or year'});
   await search.fill('hierarchical');
@@ -27,11 +28,11 @@ test('publication type and text search work together, with an accessible reset',
   await page.getByRole('button', {name: 'Conferences', exact: true}).click();
   await expect(page.getByText('No publications match this search.')).toBeVisible();
   await page.getByRole('button', {name: 'Clear filters'}).click();
-  await expect(page.locator('.publication:visible')).toHaveCount(27);
+  await expect(page.locator('.publication:visible')).toHaveCount(publications.length);
   await expect(search).toBeFocused();
   await search.fill('kim 2026');
   const matches = page.locator('.publication:visible');
-  await expect(matches).toHaveCount(4);
+  await expect(matches).toHaveCount(publications.filter(p => p.year === 2026 && p.authors.includes('Kim')).length);
   for (const entry of await matches.all()) {
     await expect(entry.locator('.publication-venue')).toContainText('2026');
     await expect(entry.locator('.publication-authors')).toContainText('Kim');
@@ -61,7 +62,7 @@ test('content and video fallbacks work without JavaScript', async ({ browser }) 
   const context = await browser.newContext({javaScriptEnabled: false});
   const page = await context.newPage();
   await page.goto('http://127.0.0.1:4321/');
-  await expect(page.locator('.publication')).toHaveCount(27);
+  await expect(page.locator('.publication')).toHaveCount(publications.length);
   await expect(page.getByRole('link', {name: 'Watch demonstration ↗'})).toHaveCount(3);
   await expect(page.locator('[data-video-toggle]').first()).toBeHidden();
   await expect(page.locator('[data-publication-toolbar]')).toBeHidden();

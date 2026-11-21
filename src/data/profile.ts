@@ -14,6 +14,7 @@ export interface ResearchProject {
   venue: string;
   description: string;
   authors: string;
+  authorNote?: string;
   url: string;
   paper: string;
   caption: string;
@@ -28,6 +29,7 @@ export const projects: ResearchProject[] = [
     venue: 'CVPR Findings · 2026',
     description: 'We show that we can teach robots new tasks, such as new sorting rules, skill composition, and rule-based ordering, via co-training with human data. This is useful because if you want to steer your robot to perform new tasks, you can simply collect human data rather than further robot data.',
     authors: 'Ji Woong Kim*, Ke Wang*, Zipeng Fu, Sirui Chen, Cong Zhao, Jeff Lai, Chelsea Finn',
+    authorNote: '* Co-first authors',
     url: 'https://egopipaper.github.io/',
     paper: 'https://arxiv.org/abs/2606.08107',
     caption: 'Ego-Pi demonstration',
@@ -41,7 +43,7 @@ export const projects: ResearchProject[] = [
       { text: '2nd highest Altmetric score among Science Robotics papers', url: 'https://www.altmetric.com/details/179138031', context: 'July 2025' },
     ],
     description: 'We explore language-conditioned hierarchical imitation learning for real surgery using animal tissues.',
-    authors: 'Ji Woong Kim, Juo-Tung Chen, Pascal Hansen, Lucy Shi, et al.',
+    authors: 'Ji Woong Kim, Juo-Tung Chen, Pascal Hansen, Lucy X. Shi, …, Chelsea Finn, Axel Krieger',
     url: 'https://h-surgical-robot-transformer.github.io/',
     paper: 'https://arxiv.org/abs/2505.10251',
     caption: 'SRT-H demonstration',
